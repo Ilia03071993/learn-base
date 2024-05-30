@@ -1,0 +1,4 @@
+http:
+  logging:
+    log-requests: true
+    log-responses: true
