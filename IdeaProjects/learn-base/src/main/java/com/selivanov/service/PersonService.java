@@ -4,8 +4,8 @@ import com.selivanov.dto.PassportDto;
 import com.selivanov.dto.PersonDto;
 import com.selivanov.entity.Passport;
 import com.selivanov.entity.Person;
-import com.selivanov.mapper.PassportMapper;
-import com.selivanov.mapper.PersonMapper;
+import com.selivanov.exception.NoSuchPersonException;
+import com.selivanov.mapper.PersonPassportMapper;
 import com.selivanov.repository.PersonRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,79 +17,92 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PersonService {
     private final PersonRepository repository;
-    private final PersonMapper mapper;
+    private final PersonPassportMapper mapper;
     private final PassportService passportService;
-    private final PassportMapper passportMapper;
 
     @Transactional(readOnly = true)
-    public PersonDto getPerson(PersonDto personDto) {
-        Person person = repository.findById(personDto.id()).orElseThrow();
-        return mapper.toDto(person);
+    public PersonDto getPerson(Integer id) {
+        Person person = repository.findPersonById(id)
+                .orElseThrow(() -> new NoSuchPersonException(
+                        "Person with id = '%d' not found".formatted(id)
+                ));
+        return mapper.toPersonDto(person);
     }
 
     @Transactional(readOnly = true)
     public List<PersonDto> getPersons() {
-        List<Person> persons = repository.findAll();
-        return mapper.toDtos(persons);
+        List<Person> persons = repository.findPersons();
+        return mapper.toPersonsDto(persons);
     }
 
     @Transactional(readOnly = true)
-    public PassportDto getPassportByPerson(PersonDto personDto) {
-        Person person = repository.findById(personDto.id()).orElseThrow();
+    public PassportDto getPersonPassport(Integer personId) {
+        Person person = repository.findPersonById(personId).orElseThrow(
+                () -> new NoSuchPersonException(
+                        "Person with id = '%d' not found".formatted(personId)
+                ));
+
         Passport passport = person.getPassport();
-        return passportMapper.toDto(passport);
+        return mapper.toPassportDto(passport);
     }
 
     @Transactional
     public void savePerson(PersonDto personDto) {
-        Person person = mapper.toEntity(personDto);
-        if (personDto.passportId() != null) {
-            Passport passport = passportService.getPassportEntityById(personDto.passportId());
-            person.setPassport(passport);
-            repository.save(person);
-        }
+        Person person = mapper.toPerson(personDto);
+
+        repository.save(person);
     }
 
     @Transactional
-    public void addPassportToPerson(PersonDto personDto, PassportDto passportDto) {
-        Person person = repository.findById(personDto.id()).orElseThrow();
-        PassportDto passportById = passportService.getPassportById(passportDto.id()).orElse(
-                passportService.savePassport(passportDto)
+    public void addPassportToPerson(Integer personId, PassportDto passportDto) {
+        Person person = repository.findPersonById(personId).orElseThrow(
+                () -> new NoSuchPersonException(
+                        "Person with id = '%d' not found".formatted(personId)
+                )
         );
 
         if (person.getPassport() != null) {
             throw new IllegalArgumentException("Passport is already exist");
-        } else if (passportById.id().equals(passportDto.id())) {
-            Passport passport = passportMapper.toEntity(passportById);
-            person.setPassport(passport);
-            repository.save(person);
         }
 
-        Passport passport = passportMapper.toEntity(passportById);
+        Passport passport = passportService.createOrGetPassport(passportDto);
         person.setPassport(passport);
         repository.save(person);
     }
 
     @Transactional
-    public void updatePersonById(PersonDto personDto) {
-        Person updatablePerson = repository.findById(personDto.id()).orElseThrow();
-        updatablePerson.setName(personDto.name());
+    public void updatePersonById(Integer id, PersonDto personDto) {
+        Person updatablePerson = repository.findPersonById(id)
+                .orElseThrow(
+                        () -> new NoSuchPersonException(
+                                "Person with id = '%d' not found".formatted(id)
+                        )
+                );
+        mapper.updatePerson(updatablePerson, personDto);
         repository.save(updatablePerson);
     }
 
+    //update Person p set p.passport = null;
     @Transactional
-    public void deletePassportFromPerson(PersonDto personDto) {
-        Person person = repository.findById(personDto.id()).orElseThrow();
+    public void deletePassportFromPerson(Integer personId) {
+        Person person = repository.findPersonById(personId).orElseThrow(
+                () -> new NoSuchPersonException(
+                        "Person with id = '%d' not found".formatted(personId)
+                )
+        );
         Passport passport = person.getPassport();
-        if (passport != null) {
-            person.setPassport(null);
-            repository.save(person);
-        }
+
+        person.setPassport(null);
+        repository.save(person); //ignores if passport == null
     }
 
     @Transactional
     public void deletePersonById(Integer id) {
-        Person person = repository.findById(id).orElseThrow();
+        Person person = repository.findPersonById(id).orElseThrow(
+                () -> new NoSuchPersonException(
+                        "Person with id = '%d' not found".formatted(id)
+                )
+        );
         repository.delete(person);
     }
 }
