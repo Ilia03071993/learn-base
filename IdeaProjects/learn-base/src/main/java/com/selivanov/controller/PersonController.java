@@ -17,7 +17,7 @@ import java.util.List;
 public class PersonController {
     private final PersonService service;
 
-    @GetMapping("/{id}'")
+    @GetMapping("/{id}")
     public ResponseEntity<PersonDto> getPersonById(@PathVariable Integer id) {
         PersonDto person = service.getPerson(id);
         return ResponseEntity.ok(person);

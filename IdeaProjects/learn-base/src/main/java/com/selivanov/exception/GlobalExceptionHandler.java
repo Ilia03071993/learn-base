@@ -32,8 +32,12 @@ public class GlobalExceptionHandler
                 .body(new com.selivanov.dto.ErrorResponse(status.value(), "Validation error", list));
     }
 
-    @ExceptionHandler({NoSuchPassportException.class,
-            NoSuchPersonException.class})
+    @ExceptionHandler({
+            NoSuchPassportException.class,
+            NoSuchPersonException.class,
+            NoSuchEmployeeException.class,
+            NoSuchDepartmentException.class
+    })
     public ResponseEntity<com.selivanov.dto.ErrorResponse> handleNotFoundException(Exception ex) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)

@@ -13,18 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class PassportService {
     private final PassportRepository repository;
     private final PersonPassportMapper mapper;
-
-//    @Transactional(readOnly = true)
-//    public Optional<PassportDto> getPassportById(Integer id) {
-//        return repository.findById(id)
-//                .map(m -> mapper.toPassportDto(m));
-//    }
-
-//    @Transactional(readOnly = true)
-//    public Passport getPassportEntityById(Integer id) {
-//        return repository.findById(id).orElseThrow();
-//    }
-
     @Transactional
     public void savePassport(PassportDto passportDto) {
         Passport passport = mapper.toPassport(passportDto);
