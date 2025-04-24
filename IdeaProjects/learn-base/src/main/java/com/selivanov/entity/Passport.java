@@ -15,6 +15,4 @@ public class Passport {
     private Integer number;
     private Integer series;
 
-//    @OneToOne(mappedBy = "passport", cascade = CascadeType.PERSIST)
-//    private Person person;
 }

@@ -1,0 +1,64 @@
+package com.selivanov.controller;
+
+import com.selivanov.dto.StudentDto;
+import com.selivanov.service.StudentService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/students")
+public class StudentController {
+    private final StudentService studentService;
+
+    @GetMapping("/{id}")
+    public ResponseEntity<StudentDto> getStudentById(@PathVariable("id") Integer id) {
+        StudentDto student = studentService.getStudentById(id);
+        return ResponseEntity.ok(student);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<StudentDto>> getAllStudents() {
+        List<StudentDto> students = studentService.getAllStudents();
+        return ResponseEntity.ok(students);
+    }
+
+    @PostMapping
+    public ResponseEntity<?> saveStudent(@RequestBody StudentDto studentDto) {
+        studentService.saveStudent(studentDto);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{studentId}/course/{courseName}")
+    public ResponseEntity<?> attachCourseToStudent(
+            @PathVariable("studentId") Integer studentId,
+            @PathVariable("courseName") String courseName) {
+        studentService.attachCourseToStudent(courseName, studentId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateStudentById(@PathVariable("id") Integer id,
+                                               @RequestBody StudentDto studentDto) {
+        studentService.updateStudentById(id, studentDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{studentId}/course/{courseName}")
+    public ResponseEntity<?> detachCourseFromStudent(
+            @PathVariable("studentId") Integer studentId,
+            @PathVariable("courseName") String courseName) {
+        studentService.detachCourseFromStudent(courseName, studentId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteStudent(@PathVariable("id") Integer id) {
+        studentService.deleteStudent(id);
+        return ResponseEntity.ok().build();
+    }
+}

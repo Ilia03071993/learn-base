@@ -23,10 +23,6 @@ public class DepartmentService {
         repository.save(mapper.toDepartment(departmentDto));
     }
 
-    public void saveDepartment(Department department) {
-        repository.save(department);
-    }
-
     public Department createOrGetDepartment(DepartmentDto departmentDto) {
         return repository.findById(departmentDto.id())
                 .orElse(repository.save(mapper.toDepartment(departmentDto)));

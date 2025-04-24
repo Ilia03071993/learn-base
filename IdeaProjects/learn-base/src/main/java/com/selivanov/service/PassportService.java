@@ -18,7 +18,6 @@ public class PassportService {
         Passport passport = mapper.toPassport(passportDto);
         repository.save(passport);
     }
-
     @Transactional
     public Passport createOrGetPassport(PassportDto passportDto) {
         return repository.findById(passportDto.id())
