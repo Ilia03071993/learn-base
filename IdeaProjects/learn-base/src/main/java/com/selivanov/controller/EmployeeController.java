@@ -2,6 +2,7 @@ package com.selivanov.controller;
 
 import com.selivanov.dto.EmployeeDto;
 import com.selivanov.service.EmployeeService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,14 +34,14 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<?> saveEmployee(@RequestBody EmployeeDto employeeDto) {
+    public ResponseEntity<?> saveEmployee(@Valid @RequestBody EmployeeDto employeeDto) {
         service.saveEmployee(employeeDto);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/department/{id}")
     public ResponseEntity<?> createEmployeeToDepartment(@PathVariable("id") Integer id,
-                                                        @RequestBody EmployeeDto employeeDto) {
+                                                        @Valid @RequestBody EmployeeDto employeeDto) {
         service.createEmployeeToDepartment(id, employeeDto);
         return ResponseEntity.ok().build();
     }
@@ -61,7 +62,7 @@ public class EmployeeController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateEmployee(@PathVariable("id") Integer id,
-                                            @RequestBody EmployeeDto employeeDto) {
+                                            @Valid @RequestBody EmployeeDto employeeDto) {
         service.updateEmployeeById(id, employeeDto);
         return ResponseEntity.ok().build();
     }

@@ -2,6 +2,7 @@ package com.selivanov.controller;
 
 import com.selivanov.dto.StudentDto;
 import com.selivanov.service.StudentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +34,7 @@ public class StudentController {
     }
 
     @PostMapping
-    public ResponseEntity<?> saveStudent(@RequestBody StudentDto studentDto) {
+    public ResponseEntity<?> saveStudent(@Valid @RequestBody StudentDto studentDto) {
         studentService.saveStudent(studentDto);
 
         return ResponseEntity.ok().build();
@@ -49,7 +50,7 @@ public class StudentController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateStudentById(@PathVariable("id") Integer id,
-                                               @RequestBody StudentDto studentDto) {
+                                               @Valid @RequestBody StudentDto studentDto) {
         studentService.updateStudentById(id, studentDto);
         return ResponseEntity.ok().build();
     }

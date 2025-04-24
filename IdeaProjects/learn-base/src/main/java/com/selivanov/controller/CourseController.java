@@ -2,6 +2,7 @@ package com.selivanov.controller;
 
 import com.selivanov.dto.CourseDto;
 import com.selivanov.service.CourseService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class CourseController {
     private final CourseService courseService;
 
     @PostMapping
-    public ResponseEntity<CourseDto> saveCourse(@RequestBody CourseDto courseDto) {
+    public ResponseEntity<CourseDto> saveCourse(@Valid @RequestBody CourseDto courseDto) {
         CourseDto course = courseService.saveCourse(courseDto);
         return ResponseEntity.ok(course);
     }

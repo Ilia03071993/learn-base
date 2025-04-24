@@ -49,7 +49,8 @@ public class PersonController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updatePersonById(@PathVariable Integer id, @Valid @RequestBody PersonDto personDto) {
+    public ResponseEntity<?> updatePersonById(@PathVariable Integer id,
+                                              @Valid @RequestBody PersonDto personDto) {
         service.updatePersonById(id, personDto);
         return ResponseEntity.ok().build();
     }

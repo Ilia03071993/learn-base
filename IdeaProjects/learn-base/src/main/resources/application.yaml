@@ -4,10 +4,15 @@ spring:
     url: jdbc:postgresql://localhost:5432/learn_base
     username: pg
     password: root
+
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: true
+      ddl-auto: none
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    baseline-version: 2
 
 #server:
 #  port: 8081
