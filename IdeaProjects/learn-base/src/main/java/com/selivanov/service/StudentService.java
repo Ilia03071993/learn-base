@@ -27,6 +27,19 @@ public class StudentService {
 
         return mapper.toStudentDto(student);
     }
+    @Transactional(readOnly = true)
+    public StudentDto getStudentByName(String name) {
+        Student student = repository.getStudentByName(name).orElseThrow(
+                () -> new NoSuchStudentException("Student with id = '%s' not found".formatted(name))
+        );
+        try {
+            Thread.sleep(10_000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        return mapper.toStudentDto(student);
+    }
 
     @Transactional(readOnly = true)
     public List<StudentDto> getAllStudents() {

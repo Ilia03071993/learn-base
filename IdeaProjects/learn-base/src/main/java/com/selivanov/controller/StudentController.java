@@ -20,6 +20,12 @@ public class StudentController {
         return ResponseEntity.ok(student);
     }
 
+    @GetMapping("/name/{name}")
+    public ResponseEntity<StudentDto> getStudentByName(@PathVariable("name") String name) {
+        StudentDto student = studentService.getStudentByName(name);
+        return ResponseEntity.ok(student);
+    }
+
     @GetMapping
     public ResponseEntity<List<StudentDto>> getAllStudents() {
         List<StudentDto> students = studentService.getAllStudents();
