@@ -33,12 +33,8 @@ public class GlobalExceptionHandler
     }
 
     @ExceptionHandler({
-            NoSuchPassportException.class,
-            NoSuchPersonException.class,
-            NoSuchEmployeeException.class,
-            NoSuchDepartmentException.class,
-            NoSuchStudentException.class,
-            NoSuchCourseException.class
+            NoSuchEntityException.class,
+            ExistPassportException.class
     })
     public ResponseEntity<com.selivanov.dto.ErrorResponse> handleNotFoundException(Exception ex) {
         return ResponseEntity

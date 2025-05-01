@@ -4,7 +4,8 @@ import com.selivanov.dto.PassportDto;
 import com.selivanov.dto.PersonDto;
 import com.selivanov.entity.Passport;
 import com.selivanov.entity.Person;
-import com.selivanov.exception.NoSuchPersonException;
+import com.selivanov.exception.ExistPassportException;
+import com.selivanov.exception.NoSuchEntityException;
 import com.selivanov.mapper.PersonPassportMapper;
 import com.selivanov.repository.PersonRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ public class PersonService {
     @Transactional(readOnly = true)
     public PersonDto getPerson(Integer id) {
         Person person = repository.findPersonById(id)
-                .orElseThrow(() -> new NoSuchPersonException(
+                .orElseThrow(() -> new NoSuchEntityException(
                         "Person with id = '%d' not found".formatted(id)
                 ));
         return mapper.toPersonDto(person);
@@ -38,7 +39,7 @@ public class PersonService {
     @Transactional(readOnly = true)
     public PassportDto getPersonPassport(Integer personId) {
         Person person = repository.findPersonById(personId).orElseThrow(
-                () -> new NoSuchPersonException(
+                () -> new NoSuchEntityException(
                         "Person with id = '%d' not found".formatted(personId)
                 ));
 
@@ -49,20 +50,18 @@ public class PersonService {
     @Transactional
     public void savePerson(PersonDto personDto) {
         Person person = mapper.toPerson(personDto);
-
         repository.save(person);
     }
 
     @Transactional
     public void addPassportToPerson(Integer personId, PassportDto passportDto) {
         Person person = repository.findPersonById(personId).orElseThrow(
-                () -> new NoSuchPersonException(
+                () -> new NoSuchEntityException(
                         "Person with id = '%d' not found".formatted(personId)
-                )
-        );
+                ));
 
         if (person.getPassport() != null) {
-            throw new IllegalArgumentException("Passport is already exist");
+            throw new ExistPassportException("Passport is already exist");
         }
 
         Passport passport = passportService.createOrGetPassport(passportDto);
@@ -74,7 +73,7 @@ public class PersonService {
     public void updatePersonById(Integer id, PersonDto personDto) {
         Person updatablePerson = repository.findPersonById(id)
                 .orElseThrow(
-                        () -> new NoSuchPersonException(
+                        () -> new NoSuchEntityException(
                                 "Person with id = '%d' not found".formatted(id)
                         )
                 );
@@ -86,12 +85,10 @@ public class PersonService {
     @Transactional
     public void deletePassportFromPerson(Integer personId) {
         Person person = repository.findPersonById(personId).orElseThrow(
-                () -> new NoSuchPersonException(
+                () -> new NoSuchEntityException(
                         "Person with id = '%d' not found".formatted(personId)
                 )
         );
-        Passport passport = person.getPassport();
-
         person.setPassport(null);
         repository.save(person); //ignores if passport == null
     }
@@ -99,7 +96,7 @@ public class PersonService {
     @Transactional
     public void deletePersonById(Integer id) {
         Person person = repository.findPersonById(id).orElseThrow(
-                () -> new NoSuchPersonException(
+                () -> new NoSuchEntityException(
                         "Person with id = '%d' not found".formatted(id)
                 )
         );

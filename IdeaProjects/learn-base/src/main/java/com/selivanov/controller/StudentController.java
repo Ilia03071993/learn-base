@@ -3,6 +3,9 @@ package com.selivanov.controller;
 import com.selivanov.dto.StudentDto;
 import com.selivanov.service.StudentService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,14 +39,13 @@ public class StudentController {
     @PostMapping
     public ResponseEntity<?> saveStudent(@Valid @RequestBody StudentDto studentDto) {
         studentService.saveStudent(studentDto);
-
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/{studentId}/course/{courseName}")
+    @PutMapping("/{studentId}/courses/{courseName}")
     public ResponseEntity<?> attachCourseToStudent(
             @PathVariable("studentId") Integer studentId,
-            @PathVariable("courseName") String courseName) {
+            @PathVariable("courseName") @NotBlank @Size(min = 1, max = 50) String courseName) {
         studentService.attachCourseToStudent(courseName, studentId);
         return ResponseEntity.ok().build();
     }
@@ -55,10 +57,10 @@ public class StudentController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{studentId}/course/{courseName}")
+    @DeleteMapping("/{studentId}/courses/{courseName}")
     public ResponseEntity<?> detachCourseFromStudent(
             @PathVariable("studentId") Integer studentId,
-            @PathVariable("courseName") String courseName) {
+            @PathVariable("courseName")@NotBlank @Size(min = 1, max = 50) String courseName) {
         studentService.detachCourseFromStudent(courseName, studentId);
         return ResponseEntity.ok().build();
     }

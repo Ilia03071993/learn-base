@@ -15,16 +15,16 @@ import java.util.List;
 public class EmployeeController {
     private final EmployeeService service;
 
-    @GetMapping("/{id}")
-    private ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable Integer id) {
-        EmployeeDto employee = service.getEmployeeById(id);
-        return ResponseEntity.ok(employee);
-    }
-
     @GetMapping
     public ResponseEntity<List<EmployeeDto>> getAllEmployees() {
         List<EmployeeDto> employees = service.getAllEmployees();
         return ResponseEntity.ok(employees);
+    }
+
+    @GetMapping("/{id}")
+    private ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable Integer id) {
+        EmployeeDto employee = service.getEmployeeById(id);
+        return ResponseEntity.ok(employee);
     }
 
     @GetMapping("/department/{id}")
@@ -40,21 +40,21 @@ public class EmployeeController {
     }
 
     @PostMapping("/department/{id}")
-    public ResponseEntity<?> createEmployeeToDepartment(@PathVariable("id") Integer id,
-                                                        @Valid @RequestBody EmployeeDto employeeDto) {
-        service.createEmployeeToDepartment(id, employeeDto);
+    public ResponseEntity<?> addEmployeeToDepartment(@PathVariable("id") Integer id,
+                                                     @Valid @RequestBody EmployeeDto employeeDto) {
+        service.addEmployeeToDepartment(id, employeeDto);
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/{id}/attach-department/{departmentId}")
+    @PutMapping("/{id}/department/{departmentId}/attach")
     public ResponseEntity<?> attachEmployeeToDepartment(@PathVariable("id") Integer employeeId,
                                                         @PathVariable("departmentId") Integer departmentId) {
         service.attachEmployeeToDepartment(employeeId, departmentId);
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/{employeeId}/department/{departmentId}")
-    public ResponseEntity<?> transferEmployeeToDepartment(@PathVariable("employeeId") Integer employeeId,
+    @PutMapping("/{id}/department/{departmentId}")
+    public ResponseEntity<?> transferEmployeeToDepartment(@PathVariable("id") Integer employeeId,
                                                           @PathVariable("departmentId") Integer departmentId) {
         service.transferEmployeeToDepartment(employeeId, departmentId);
         return ResponseEntity.ok().build();
@@ -67,8 +67,9 @@ public class EmployeeController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{employeeId}/department/{departmentId}")
-    public ResponseEntity<?> detachEmployeeFromDepartment(@PathVariable("employeeId") Integer employeeId,
+    //Employee is not deleted
+    @DeleteMapping("/{id}/department/{departmentId}")
+    public ResponseEntity<?> detachEmployeeFromDepartment(@PathVariable("id") Integer employeeId,
                                                           @PathVariable("departmentId") Integer departmentId) {
         service.detachEmployeeFromDepartment(departmentId, employeeId);
         return ResponseEntity.ok().build();

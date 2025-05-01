@@ -3,7 +3,7 @@ package com.selivanov.service;
 import com.selivanov.dto.StudentDto;
 import com.selivanov.entity.Course;
 import com.selivanov.entity.Student;
-import com.selivanov.exception.NoSuchStudentException;
+import com.selivanov.exception.NoSuchEntityException;
 import com.selivanov.mapper.StudentMapper;
 import com.selivanov.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,16 +21,17 @@ public class StudentService {
 
     @Transactional(readOnly = true)
     public StudentDto getStudentById(Integer id) {
-        Student student = repository.findById(id).orElseThrow(
-                () -> new NoSuchStudentException("Student with id = '%d' not found".formatted(id))
+        Student student = repository.findStudentById(id).orElseThrow(
+                () -> new NoSuchEntityException("Student with id = '%d' not found".formatted(id))
         );
 
         return mapper.toStudentDto(student);
     }
+
     @Transactional(readOnly = true)
     public StudentDto getStudentByName(String name) {
-        Student student = repository.getStudentByName(name).orElseThrow(
-                () -> new NoSuchStudentException("Student with id = '%s' not found".formatted(name))
+        Student student = repository.findStudentByName(name).orElseThrow(
+                () -> new NoSuchEntityException("Student with id = '%s' not found".formatted(name))
         );
         try {
             Thread.sleep(10_000);
@@ -43,59 +44,47 @@ public class StudentService {
 
     @Transactional(readOnly = true)
     public List<StudentDto> getAllStudents() {
-        List<Student> students = repository.findAll();
+        List<Student> students = repository.findStudents();
         return mapper.toStudentsDto(students);
     }
 
     @Transactional
     public void saveStudent(StudentDto studentDto) {
         Student student = mapper.toStudent(studentDto);
-        if (student.getCourses() != null) {
-            for (Course course : student.getCourses()) {
-                course.getStudents().add(student);
-            }
-        }
         repository.save(student);
     }
 
     @Transactional
     public void attachCourseToStudent(String courseName, Integer studentId) {
-        if (courseName != null && !courseName.isBlank() && studentId != null) {
-            Student student = repository.findById(studentId).orElseThrow(
-                    () -> new NoSuchStudentException("Student with id = '%d' not found".formatted(studentId))
-            );
-            Course course = courseService.getCourseByName(courseName);
-            student.getCourses().add(course);
-            repository.save(student);
-        }
-    } //?
+        Student student = repository.findById(studentId).orElseThrow(
+                () -> new NoSuchEntityException("Student with id = '%d' not found".formatted(studentId))
+        );
+        Course course = courseService.getCourseByName(courseName);
+        repository.saveStudentsCourses(student.getId(), course.getId());
+    }
 
     @Transactional
     public void updateStudentById(Integer id, StudentDto studentDto) {
         Student updatableStudent = repository.findById(id).orElseThrow(
-                () -> new NoSuchStudentException("Student with id = '%d' not found".formatted(id))
+                () -> new NoSuchEntityException("Student with id = '%d' not found".formatted(id))
         );
         mapper.updateStudent(updatableStudent, studentDto);
         repository.save(updatableStudent);
-    } // Обновление должно выполнять с изменением course или без?
+    }
 
     @Transactional
     public void detachCourseFromStudent(String courseName, Integer studentId) {
-        if (courseName != null && !courseName.isBlank() && studentId != null) {
-            Student student = repository.findById(studentId).orElseThrow(
-                    () -> new NoSuchStudentException("Student with id = '%d' not found".formatted(studentId))
-            );
-            Course course = courseService.getCourseByName(courseName);
-
-            student.getCourses().remove(course);
-            repository.save(student);
-        }
+        Student student = repository.findById(studentId).orElseThrow(
+                () -> new NoSuchEntityException("Student with id = '%d' not found".formatted(studentId))
+        );
+        Course course = courseService.getCourseByName(courseName);
+        repository.deleteFromStudentsCourses(student.getId(), course.getId());
     }
 
     @Transactional
     public void deleteStudent(Integer id) {
         Student student = repository.findById(id).orElseThrow(
-                () -> new NoSuchStudentException("Student with id = '%d' not found".formatted(id))
+                () -> new NoSuchEntityException("Student with id = '%d' not found".formatted(id))
         );
         repository.delete(student);
     }

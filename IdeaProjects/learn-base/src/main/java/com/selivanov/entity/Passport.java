@@ -14,5 +14,4 @@ public class Passport {
     private Integer id;
     private Integer number;
     private Integer series;
-
 }
