@@ -34,7 +34,7 @@ public class StudentService {
                 () -> new NoSuchEntityException("Student with id = '%s' not found".formatted(name))
         );
         try {
-            Thread.sleep(10_000);
+            Thread.sleep(3_000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

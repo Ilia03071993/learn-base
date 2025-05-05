@@ -7,16 +7,22 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/students")
 public class StudentController {
+    private static final String STRING_TOPIC = "kafka-string-topic";
+
     private final StudentService studentService;
+    private final KafkaTemplate<Integer, StudentDto> kafkaTemplate;
 
     @GetMapping("/{id}")
     public ResponseEntity<StudentDto> getStudentById(@PathVariable("id") Integer id) {
@@ -27,6 +33,9 @@ public class StudentController {
     @GetMapping("/name/{name}")
     public ResponseEntity<StudentDto> getStudentByName(@PathVariable("name") String name) {
         StudentDto student = studentService.getStudentByName(name);
+        kafkaTemplate.send(STRING_TOPIC, student);
+
+        log.info("Message sent to Kafka in topic" + STRING_TOPIC);
         return ResponseEntity.ok(student);
     }
 
@@ -60,7 +69,7 @@ public class StudentController {
     @DeleteMapping("/{studentId}/courses/{courseName}")
     public ResponseEntity<?> detachCourseFromStudent(
             @PathVariable("studentId") Integer studentId,
-            @PathVariable("courseName")@NotBlank @Size(min = 1, max = 50) String courseName) {
+            @PathVariable("courseName") @NotBlank @Size(min = 1, max = 50) String courseName) {
         studentService.detachCourseFromStudent(courseName, studentId);
         return ResponseEntity.ok().build();
     }
