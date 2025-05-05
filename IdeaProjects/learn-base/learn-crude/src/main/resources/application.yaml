@@ -7,13 +7,13 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     show-sql: true
 
   flyway:
     enabled: true
-    baseline-on-migrate: true
-    baseline-version: 2
+#    baseline-on-migrate: true
+#    baseline-version: 2
 
 #server:
 #  port: 8081

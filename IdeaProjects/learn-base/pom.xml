@@ -14,6 +14,11 @@
     <groupId>org.example</groupId>
     <artifactId>learn-base</artifactId>
     <version>1.0</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>learn-crude</module>
+        <module>learn-aggregator</module>
+    </modules>
 
     <properties>
         <java.version>17</java.version>
