@@ -4,7 +4,9 @@ import com.selivanov.dto.StudentDto;
 import com.selivanov.service.ClientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,8 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/client")
 public class ClientController {
-    private static final String STRING_TOPIC = "kafka-string-topic";
 
+    private final KafkaTemplate<Integer, StudentDto> kafkaTemplate;
+    @Value("${kafka.topics.student-response}")
+    private String studentResponseTopic;
     public final ClientService clientService;
 
 //    @GetMapping("/{name}")
@@ -22,9 +26,11 @@ public class ClientController {
 //        return ResponseEntity.ok(clientService.getStudentByName(name));
 //    }
 
-    @KafkaListener(topics = STRING_TOPIC)
-    public void getStudentByNameAsync(StudentDto studentDto) {
+    @KafkaListener(topics = "${kafka.topics.student-request}")
+    public void getStudentByNameAsyncFromProducer(StudentDto studentDto) {
+        log.info("Consumed from producer: " + studentDto.name());
         clientService.getStudentByNameAsync(studentDto);
-        log.info("Message get to topic");
+
+        kafkaTemplate.send(studentResponseTopic, studentDto);
     }
 }

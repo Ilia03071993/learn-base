@@ -4,10 +4,10 @@ import com.selivanov.dto.StudentDto;
 import com.selivanov.service.StudentService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -19,9 +19,10 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/students")
 public class StudentController {
-    private static final String STRING_TOPIC = "kafka-string-topic";
-
     private final StudentService studentService;
+
+    @Value("${kafka.topics.student-request}")
+    private String studentTopic;
     private final KafkaTemplate<Integer, StudentDto> kafkaTemplate;
 
     @GetMapping("/{id}")
@@ -33,9 +34,8 @@ public class StudentController {
     @GetMapping("/name/{name}")
     public ResponseEntity<StudentDto> getStudentByName(@PathVariable("name") String name) {
         StudentDto student = studentService.getStudentByName(name);
-        kafkaTemplate.send(STRING_TOPIC, student);
-
-        log.info("Message sent to Kafka in topic" + STRING_TOPIC);
+        kafkaTemplate.send(studentTopic, student);
+        log.info("Message sent to Kafka in topic" + studentTopic);
         return ResponseEntity.ok(student);
     }
 

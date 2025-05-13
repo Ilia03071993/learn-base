@@ -1,9 +1,20 @@
+kafka:
+  topics:
+    student-request: student-info-topic
+    student-response: student-async-result
+
 spring:
   kafka:
     bootstrap-servers: "localhost:9092"
     producer:
       key-serializer: "org.apache.kafka.common.serialization.IntegerSerializer"
       value-serializer: "org.springframework.kafka.support.serializer.JsonSerializer"
+    consumer:
+      key-deserializer: "org.apache.kafka.common.serialization.IntegerDeserializer"
+      value-deserializer: "org.springframework.kafka.support.serializer.JsonDeserializer"
+      group-id: "learn-aggregator"
+    properties:
+      spring.json.trusted.packages: "*"
 
   datasource:
     driverClassName: org.postgresql.Driver
