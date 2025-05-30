@@ -1,6 +1,6 @@
 package com.selivanov.controller;
 
-import com.selivanov.dto.CourseDto;
+import com.selivanov.model.CourseDto;
 import com.selivanov.service.CourseService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package com.selivanov.controller;
 
-import com.selivanov.dto.StudentDto;
+import com.selivanov.model.StudentDto;
 import com.selivanov.service.StudentService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +22,7 @@ import java.util.List;
 public class StudentController {
     private final StudentService studentService;
 
-    @Value("${kafka.topics.student-request}")
+    @Value("${kafka.topics.student-response}")
     private String studentTopic;
     private final KafkaTemplate<Integer, StudentDto> kafkaTemplate;
 
@@ -31,12 +32,19 @@ public class StudentController {
         return ResponseEntity.ok(student);
     }
 
+
     @GetMapping("/name/{name}")
     public ResponseEntity<StudentDto> getStudentByName(@PathVariable("name") String name) {
         StudentDto student = studentService.getStudentByName(name);
-        kafkaTemplate.send(studentTopic, student);
-        log.info("Message sent to Kafka in topic" + studentTopic);
         return ResponseEntity.ok(student);
+    }
+
+    @KafkaListener(topics = "${kafka.topics.student-request}")
+    public ResponseEntity<Void> getStudentByNameFromKafka(StudentDto studentDto) {
+        StudentDto student = studentService.getStudentByName(studentDto.name());
+        log.info("Message get from KafkaConsumer: student name = %s".formatted(student.name()));
+
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping

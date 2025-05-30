@@ -1,4 +1,4 @@
-package com.selivanov.dto;
+package com.selivanov.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.Column;

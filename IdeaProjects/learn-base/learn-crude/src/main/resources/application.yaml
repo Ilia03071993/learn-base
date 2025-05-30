@@ -31,3 +31,8 @@ spring:
     enabled: true
 #    baseline-on-migrate: true
 #    baseline-version: 2
+jwt:
+  config:
+    secret: 'c2VjcmV0X3NlY3JldF9zZWNyZXRfc2VjcmV0X3NlY3JldA=='
+    tokenExpirationMs: 60_000
+    refreshTokenExpirationMs: 3600_000

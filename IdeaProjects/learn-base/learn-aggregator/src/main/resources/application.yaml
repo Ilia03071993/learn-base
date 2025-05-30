@@ -1,3 +1,6 @@
+clients:
+  student: "http://localhost:8080/api/students"
+
 server:
   port: 8081
 

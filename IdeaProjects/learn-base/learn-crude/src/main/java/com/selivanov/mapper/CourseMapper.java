@@ -1,7 +1,7 @@
 package com.selivanov.mapper;
 
-import com.selivanov.dto.CourseDto;
 import com.selivanov.entity.Course;
+import com.selivanov.model.CourseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

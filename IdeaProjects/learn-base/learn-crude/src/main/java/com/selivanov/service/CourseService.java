@@ -1,9 +1,9 @@
 package com.selivanov.service;
 
-import com.selivanov.dto.CourseDto;
 import com.selivanov.entity.Course;
 import com.selivanov.exception.NoSuchEntityException;
 import com.selivanov.mapper.CourseMapper;
+import com.selivanov.model.CourseDto;
 import com.selivanov.repository.CourseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

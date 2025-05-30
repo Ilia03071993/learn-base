@@ -1,13 +1,11 @@
 package com.selivanov.mapper;
 
-import com.selivanov.dto.StudentDto;
 import com.selivanov.entity.Student;
-import org.mapstruct.InheritInverseConfiguration;
+import com.selivanov.model.StudentDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-import java.lang.annotation.Target;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
