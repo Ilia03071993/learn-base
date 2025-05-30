@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,7 +33,7 @@ public class JwtValidationFilter extends OncePerRequestFilter {
             try {
                 UserTokenInfo userTokenInfo = jwtUtil.validateToken(token);
                 Authentication auth = new UsernamePasswordAuthenticationToken(
-                        userTokenInfo, null, userTokenInfo.authorities()
+                        userTokenInfo.username(), null, userTokenInfo.authorities()
                 );
 
                 SecurityContextHolder.getContext().setAuthentication(auth);
@@ -53,6 +54,7 @@ public class JwtValidationFilter extends OncePerRequestFilter {
     @SneakyThrows
     private void handleException(HttpServletResponse response, String message, Exception e) {
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         MAPPER.writeValue(response.getWriter(), new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), message, null));
     }
 
