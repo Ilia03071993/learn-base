@@ -3,7 +3,6 @@ package com.selivanov.config;
 import com.selivanov.config.jwt.*;
 import com.selivanov.repository.ApplicationUserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

@@ -68,5 +68,4 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), failed.getMessage(), null);
         MAPPER.writeValue(response.getOutputStream(), errorResponse);
     }
-
 }

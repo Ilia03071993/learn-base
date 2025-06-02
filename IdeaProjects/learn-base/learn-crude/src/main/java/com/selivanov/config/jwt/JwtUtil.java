@@ -47,7 +47,6 @@ public class JwtUtil {
                 .parseSignedClaims(accessToken)
                 .getPayload();
         String username = claims.getSubject();
-        //String username = claims.get("username", String.class);
 
         return new UserTokenInfo(username, obtainAuthorities(claims));
     }
