@@ -1,8 +1,7 @@
 clients:
-  student: "http://localhost:8080/api/students"
-
-server:
-  port: 8081
+  university: "http://localhost:8080"
+  username: "Bob"
+  password: "secret123"
 
 kafka:
   topics:
@@ -42,3 +41,10 @@ jwt:
     secret: 'c2VjcmV0X3NlY3JldF9zZWNyZXRfc2VjcmV0X3NlY3JldA=='
     tokenExpirationMs: 60_000
     refreshTokenExpirationMs: 3600_000
+
+server:
+  port: 8081
+
+logging:
+  level:
+    org.springframework.boot.context.properties.bind: DEBUG

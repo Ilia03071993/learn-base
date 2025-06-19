@@ -1,8 +1,8 @@
 package com.selivanov.config.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.selivanov.dto.AuthResponse;
-import com.selivanov.dto.UserTokenInfo;
+import com.selivanov.model.auth.AuthResponse;
+import com.selivanov.dto.security.UserTokenInfo;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

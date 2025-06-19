@@ -1,13 +1,13 @@
 package com.selivanov.controller;
 
 import com.selivanov.dto.UserDto;
-import com.selivanov.entity.ApplicationUser;
+import com.selivanov.dto.security.PasswordChangeRequest;
+import com.selivanov.dto.security.PasswordChangeResponse;
 import com.selivanov.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,22 +16,8 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/authentication-user")
-    public ResponseEntity<UserDto> getAuthenticationUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String authenticationName = authentication.getName();
-
-        ApplicationUser user = userService.findUserByName(authenticationName);
-
-        UserDto userDto = new UserDto(
-                authenticationName,
-                null,
-                user.getEmail(),
-                authentication.getAuthorities()
-                        .stream()
-                        .map(auth -> auth.getAuthority())
-                        .findFirst()
-                        .orElseThrow()
-        );
+    public ResponseEntity<UserDto> getAuthenticationUser(Authentication authentication) {
+        UserDto userDto = userService.findAuthenticationUser(authentication);
         return ResponseEntity.ok(userDto);
     }
 
@@ -49,10 +35,10 @@ public class UserController {
     }
 
     @PutMapping("/api/admin/users/{id}/update-password")
-    public ResponseEntity<?> updatePassword(@PathVariable Integer id, @RequestBody UserDto userDto) {
-        userService.updatePassword(id, userDto);
+    public ResponseEntity<PasswordChangeResponse> updatePassword(@PathVariable Integer id, @RequestBody PasswordChangeRequest request) {
+        PasswordChangeResponse passwordChangeResponse = userService.updatePassword(id, request);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(passwordChangeResponse);
     }
 
     @PutMapping("/api/admin/users/{id}/update-role")
@@ -64,8 +50,8 @@ public class UserController {
 
     @DeleteMapping("/api/admin/users/{userId}/role/{roleId}/remove")
     public ResponseEntity<Void> deleteRoleByUserId(@PathVariable Integer userId,
-                                                   @PathVariable Integer roleId) {
-        userService.deleteRoleByUserId(userId, roleId);
+                                                   @PathVariable String role) {
+        userService.deleteRoleByUserId(userId, role);
 
         return ResponseEntity.ok().build();
     }

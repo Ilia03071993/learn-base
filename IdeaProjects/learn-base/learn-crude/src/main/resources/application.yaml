@@ -36,3 +36,8 @@ jwt:
     secret: 'c2VjcmV0X3NlY3JldF9zZWNyZXRfc2VjcmV0X3NlY3JldA=='
     tokenExpirationMs: 60_000
     refreshTokenExpirationMs: 3600_000
+
+clients:
+  university: "http://localhost:8080"
+  username: "Bob"
+  password: "secret123"
